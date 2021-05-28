@@ -4,14 +4,14 @@ import {
   Text,
 } from 'react-native';
 import Lottie from './Component/lottieView'
-const App=()=>{
-  const [splash, setSplash]= useState(true)
+const Splash=({navigation})=>{
   useEffect(()=>{
-  setTimeout(()=>setSplash(false), 1500)
-
-  }, [])
+  const interval= setTimeout(()=>navigation.navigate('Dashboard'), 100)
+  return () => clearInterval(interval);
+  }, 
+  [])
   return(
-    splash ? (<SafeAreaView style={{justifyContent:'center', flex:1, alignItems:'center', backgroundColor:'brown'}}>
+   <SafeAreaView style={{justifyContent:'center', flex:1, alignItems:'center', backgroundColor:'brown'}}>
         <Lottie 
         style={{width:200, height:200, }}
         sourcePath={require('./Common/Lottie/weather.json')}
@@ -20,13 +20,8 @@ const App=()=>{
         <Text style={{color:"white", fontSize:30, fontWeight:'bold'}}>
           WEATHER INFO
         </Text>
-      </SafeAreaView>) :
-
-  <SafeAreaView style={{justifyContent:'center', flex:1, alignItems:'center'}}>
-    <Text>Home Page</Text>
-  </SafeAreaView>
-
+      </SafeAreaView>
   )
 }
 
-export default App;
+export default Splash;
