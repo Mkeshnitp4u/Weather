@@ -1,5 +1,6 @@
 import { put, takeLatest, call } from "redux-saga/effects";
 import * as types from "../actionTypes";
+import API from '../../Service'
 
 
 function* weatherSaga() {
@@ -7,14 +8,13 @@ function* weatherSaga() {
 }
 
 const weatherService = action => {
-  // Todo
-  return {
-  }
-};
+  const { endPoint, params } = action.payload
+  return API.get(endPoint, params)
+}
 
 function* getWeather(action) {
   try {
-    const response = yield call(weatherService, action.payload);
+    const response = yield call(weatherService, action);
     yield put({
       type: types.WEATHER_API_SUCCESS,
       payload: response.data,
