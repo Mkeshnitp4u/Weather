@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from "react-redux";
 import Splash from './Splash'
 import Dashboard from './Dashboard'
+import Detail from './Screen/Detail'
 import store from './Redux/Store'
 
 
@@ -18,6 +19,7 @@ const Entrypoint = () => {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen options={{ headerShown: false }} name="Splash" component={Splash} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
+          <Stack.Screen name="Detail" component={Detail} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
