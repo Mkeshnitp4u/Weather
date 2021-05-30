@@ -115,10 +115,12 @@ const Dashboard = (props) => {
   }
 
   return (
-    isLoading ?
-      showLoader() :
-      showRender()
-  );
+    <>
+      {isLoading && showLoader()}
+      {!isLoading && dailyWeatherInfo.length > 0 ? showRender() : null}
+    </>
+  )
+
 };
 
 const mapStateToProps = (state) => {

@@ -7,7 +7,7 @@ import Lottie from './Component/lottieView'
 import { SplashStyle } from './SplashStyle'
 const Splash = ({ navigation }) => {
   useEffect(() => {
-    const interval = setTimeout(() => navigation.navigate('Dashboard'), 100)
+    const interval = setTimeout(() => navigation.navigate('Dashboard'), 10)
     return () => clearInterval(interval);
   },
     [])
