@@ -1,26 +1,27 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  SafeAreaView,
+  View,
   Text,
 } from 'react-native';
 import Lottie from './Component/lottieView'
-const Splash=({navigation})=>{
-  useEffect(()=>{
-  const interval= setTimeout(()=>navigation.navigate('Dashboard'), 100)
-  return () => clearInterval(interval);
-  }, 
-  [])
-  return(
-   <SafeAreaView style={{justifyContent:'center', flex:1, alignItems:'center', backgroundColor:'brown'}}>
-        <Lottie 
-        style={{width:200, height:200, }}
+import { SplashStyle } from './SplashStyle'
+const Splash = ({ navigation }) => {
+  useEffect(() => {
+    const interval = setTimeout(() => navigation.navigate('Dashboard'), 100)
+    return () => clearInterval(interval);
+  },
+    [])
+  return (
+    <View style={SplashStyle.mainContainer}>
+      <Lottie
+        style={SplashStyle.lottieView}
         sourcePath={require('./Common/Lottie/weather.json')}
         show
       />
-        <Text style={{color:"white", fontSize:30, fontWeight:'bold'}}>
-          WEATHER INFO
+      <Text style={SplashStyle.textStyle}>
+        WEATHER INFO
         </Text>
-      </SafeAreaView>
+    </View>
   )
 }
 

@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from "react-redux";
-import { SafeAreaView, Text, View } from 'react-native'
+import { SafeAreaView, Text, View, FlatList, TouchableOpacity } from 'react-native'
 import { wetherDetail } from './Redux/Action/weatherAction'
 import LottieView from './Component/lottieView'
 import GeoLocation from '@react-native-community/geolocation'
+import { getDay, getDate } from './Utils'
+import { DashboardStyle } from './DashboardStyle'
 
 const Dashboard = (props) => {
-  const { currentWeatherInfo: { weatherDetail, isLoading } } = props
+  const { navigation, currentWeatherInfo: { weatherDetail, isLoading } } = props
 
   const [currentLocation, setCurrentLocation] = useState(undefined)
-  const [weatherInfo, setWeatherInfo] = useState(weatherDetail)
+  const [currentWeatherInfo, setCurrentWeatherInfo] = useState(weatherDetail)
+  const [dailyWeatherInfo, setDailyWeatherInfo] = useState([])
 
   const findCoordinates = () => {
     GeoLocation.getCurrentPosition(geo => {
@@ -26,27 +29,73 @@ const Dashboard = (props) => {
 
   useEffect(() => {
     if (currentLocation) {
-      const param = { ...currentLocation, exclude: 'minutely,hourly' }
+      const param = { ...currentLocation, exclude: 'minutely,hourly', units: "metric" }
       props.wetherDetail({ endPoint: 'onecall', params: param })
     }
   }, [currentLocation])
 
-  useEffect(() => {
-    setWeatherInfo(weatherDetail)
-  }, [weatherDetail])
-  return (
-
-    isLoading ?
-      <SafeAreaView style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+  const showLoader = () => {
+    return (
+      <SafeAreaView style={DashboardStyle.loaderViewStyle}>
         <LottieView
-          style={{ width: 80, height: 80, }}
+          style={DashboardStyle.lottieViewStyle}
           sourcePath={require('./Common/Lottie/loader.json')} />
       </SafeAreaView>
+    )
+  }
+
+  useEffect(() => {
+    if (weatherDetail) {
+      const { current, daily } = weatherDetail
+      setDailyWeatherInfo(daily)
+      setCurrentWeatherInfo(current)
+    }
+  }, [weatherDetail])
+
+  const Item = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Detail', { item })}
+      style={DashboardStyle.buttonStyle}>
+      <View style={DashboardStyle.listViewStyle}>
+        <View>
+          <Text style={DashboardStyle.textStyle}>{getDay(item.dt)}</Text>
+          <Text>{getDate(item.dt)}</Text>
+        </View>
+        <View>
+          <Text style={DashboardStyle.textStyle}>ºC</Text>
+          <Text>{item?.temp?.day}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+
+  );
+
+  const renderItem = ({ item }) => {
+    return (
+      <Item
+        item={item}
+      />
+    );
+  };
+
+  return (
+    isLoading ? showLoader()
       :
       <SafeAreaView
-        style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-        <Text>Dashboard</Text>
-        <Text>Current Location:{JSON.stringify(currentLocation)}</Text>
+        style={DashboardStyle.mainContainer}>
+        <View style={DashboardStyle.cardContainer}>
+          <View style={DashboardStyle.cardView}>
+            <Text style={DashboardStyle.celciusText}>ºC</Text>
+            <Text style={DashboardStyle.textStyle}>{currentWeatherInfo?.temp}</Text>
+          </View>
+        </View>
+        <View style={DashboardStyle.listStyle}>
+          <FlatList
+            data={dailyWeatherInfo}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.dt}
+          />
+        </View>
       </SafeAreaView>
   );
 };
