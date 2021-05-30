@@ -41,5 +41,19 @@ export const DashboardStyle = StyleSheet.create({
     lottieViewStyle: {
         width: 80,
         height: 80,
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    retryButton: {
+        marginTop: 30,
+        borderWidth: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 100,
+        height: 50,
     }
 });

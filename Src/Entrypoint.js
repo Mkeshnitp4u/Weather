@@ -29,7 +29,7 @@ const Entrypoint = () => {
               fontWeight: 'bold',
               fontSize:25
             },
-            headerLeft: () => {return null;},            
+            headerLeft: () => {return null},            
             headerTitleAlign:'center'
           }}
           name="Dashboard" component={Dashboard} />

@@ -3,7 +3,8 @@ import * as types from '../actionTypes';
 
 const INITIAL_STATE = {
   weatherDetail: undefined,
-  isLoading: false
+  isLoading: false,
+  error:false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -17,13 +18,15 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         weatherDetail: action.payload,
-        isLoading: false
+        isLoading: false,
+        error:false
       };
     case types.WEATHER_API_FAILURE:
       return {
         ...state,
         weatherDetail: action.payload,
-        isLoading: false
+        isLoading: false,
+        error:true
       };
 
     default:

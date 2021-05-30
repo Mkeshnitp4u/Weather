@@ -8,11 +8,12 @@ import { getDay, getDate } from './Utils'
 import { DashboardStyle } from './DashboardStyle'
 
 const Dashboard = (props) => {
-  const { navigation, currentWeatherInfo: { weatherDetail, isLoading } } = props
+  const { navigation, currentWeatherInfo: { weatherDetail, isLoading, error } } = props
 
   const [currentLocation, setCurrentLocation] = useState(undefined)
   const [currentWeatherInfo, setCurrentWeatherInfo] = useState(weatherDetail)
   const [dailyWeatherInfo, setDailyWeatherInfo] = useState([])
+  const [retry, setRetry] = useState(false)
 
   const findCoordinates = () => {
     GeoLocation.getCurrentPosition(geo => {
@@ -22,7 +23,6 @@ const Dashboard = (props) => {
     }, err => setCurrentLocation({ err: err.message }))
   };
 
-
   useEffect(async () => {
     await findCoordinates()
   }, [])
@@ -31,8 +31,20 @@ const Dashboard = (props) => {
     if (currentLocation) {
       const param = { ...currentLocation, exclude: 'minutely,hourly', units: "metric" }
       props.wetherDetail({ endPoint: 'onecall', params: param })
+      setRetry(false)
     }
-  }, [currentLocation])
+  }, [currentLocation, retry])
+
+  const showError = () => {
+    return (
+      <View style={DashboardStyle.errorContainer}>
+        <Text style={DashboardStyle.textStyle}>Something Went Wrong at our End</Text>
+        <TouchableOpacity onPress={() => setRetry(true)} style={DashboardStyle.retryButton} >
+          <Text>RETRY</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 
   const showLoader = () => {
     return (
@@ -78,25 +90,34 @@ const Dashboard = (props) => {
     );
   };
 
-  return (
-    isLoading ? showLoader()
-      :
-      <SafeAreaView
-        style={DashboardStyle.mainContainer}>
-        <View style={DashboardStyle.cardContainer}>
-          <View style={DashboardStyle.cardView}>
-            <Text style={DashboardStyle.celciusText}>ºC</Text>
-            <Text style={DashboardStyle.textStyle}>{currentWeatherInfo?.temp}</Text>
+  const showRender = () => {
+    return (
+      error ?
+        showError()
+        :
+        <SafeAreaView
+          style={DashboardStyle.mainContainer}>
+          <View style={DashboardStyle.cardContainer}>
+            <View style={DashboardStyle.cardView}>
+              <Text style={DashboardStyle.celciusText}>ºC</Text>
+              <Text style={DashboardStyle.textStyle}>{currentWeatherInfo?.temp}</Text>
+            </View>
           </View>
-        </View>
-        <View style={DashboardStyle.listStyle}>
-          <FlatList
-            data={dailyWeatherInfo}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.dt}
-          />
-        </View>
-      </SafeAreaView>
+          <View style={DashboardStyle.listStyle}>
+            <FlatList
+              data={dailyWeatherInfo}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.dt}
+            />
+          </View>
+        </SafeAreaView>
+    )
+  }
+
+  return (
+    isLoading ?
+      showLoader() :
+      showRender()
   );
 };
 

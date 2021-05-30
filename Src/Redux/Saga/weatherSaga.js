@@ -13,16 +13,16 @@ const weatherService = action => {
 }
 
 function* getWeather(action) {
-  try {
-    const response = yield call(weatherService, action);
+  const response = yield call(weatherService, action);
+  if (response.status === 200) {
     yield put({
       type: types.WEATHER_API_SUCCESS,
       payload: response.data,
     });
-  } catch (error) {
+  } else {
     yield put({
       type: types.WEATHER_API_FAILURE,
-      payload: error,
+      payload: response.data.message,
     });
   }
 }
