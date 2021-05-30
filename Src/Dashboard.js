@@ -3,16 +3,37 @@ import { connect } from "react-redux";
 import { SafeAreaView, Text, View } from 'react-native'
 import { wetherDetail } from './Redux/Action/weatherAction'
 import LottieView from './Component/lottieView'
+import GeoLocation from '@react-native-community/geolocation'
 
 const Dashboard = (props) => {
   const { currentWeatherInfo: { weatherDetail, isLoading } } = props
 
-
+  const [currentLocation, setCurrentLocation] = useState(undefined)
   const [weatherInfo, setWeatherInfo] = useState(weatherDetail)
-  useEffect(() => {
-    props.wetherDetail({ endPoint: 'weather', params: { lat: "25.612677", lon: "85.158875" } })
+
+  const findCoordinates = () => {
+    GeoLocation.getCurrentPosition(geo => {
+      GeoLocation.stopObserving();
+      const { coords: { latitude, longitude } } = geo
+      setCurrentLocation({ lat: latitude, lon: longitude })
+    }, err => setCurrentLocation({ err: err.message }))
+  };
+
+
+  useEffect(async () => {
+    await findCoordinates()
   }, [])
-  useEffect(() => setWeatherInfo(weatherDetail), [weatherDetail])
+
+  useEffect(() => {
+    if (currentLocation) {
+      const param = { ...currentLocation, exclude: 'minutely,hourly' }
+      props.wetherDetail({ endPoint: 'onecall', params: param })
+    }
+  }, [currentLocation])
+
+  useEffect(() => {
+    setWeatherInfo(weatherDetail)
+  }, [weatherDetail])
   return (
 
     isLoading ?
@@ -21,11 +42,12 @@ const Dashboard = (props) => {
           style={{ width: 80, height: 80, }}
           sourcePath={require('./Common/Lottie/loader.json')} />
       </SafeAreaView>
-      : <SafeAreaView
+      :
+      <SafeAreaView
         style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
         <Text>Dashboard</Text>
+        <Text>Current Location:{JSON.stringify(currentLocation)}</Text>
       </SafeAreaView>
-
   );
 };
 
