@@ -16,10 +16,36 @@ const Entrypoint = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator screenOptions={{headerTitleAlign: 'center'}} initialRouteName="Home">
           <Stack.Screen options={{ headerShown: false }} name="Splash" component={Splash} />
-          <Stack.Screen name="Dashboard" component={Dashboard} />
-          <Stack.Screen name="Detail" component={Detail} />
+          <Stack.Screen 
+          options={{
+            title:'Weather Info',
+            headerStyle: {
+              backgroundColor: '#E6B0AA',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize:25
+            },
+            headerLeft: () => {return null;},            
+            headerTitleAlign:'center'
+          }}
+          name="Dashboard" component={Dashboard} />
+          <Stack.Screen 
+           options={{
+            headerStyle: {
+              backgroundColor: '#E6B0AA',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize:25
+            },
+            headerTitleAlign:'center'
+          }}
+          name="Detail" component={Detail} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
